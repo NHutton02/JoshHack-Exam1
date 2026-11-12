@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CreatureTest {
 
@@ -62,5 +63,21 @@ void setUp() {
         assertEquals(0, creature.hp());
         assertEquals("Fatal Damage", creature.causeOfDeath());
         }
+
+    @Test 
+    void testFatalDamageCreatesCorpse(){
+
+        creature.modifyHp(-100, "Fatal Damage");
+
+        Item corpse = world.item(1,1,0);
+
+        assertNotNull(corpse, "Fatal damage should create a corpse");
+
+        assertEquals("josh corpse", corpse.name());
+
+
+
+
+    }
     
     }
