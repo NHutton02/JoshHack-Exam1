@@ -10,6 +10,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
       - name: Check out repository
@@ -38,3 +41,11 @@ jobs:
           name: joshhack-pit-report
           path: target/pit-reports/
           if-no-files-found: warn
+
+      - name: Run SpotBugs analysis
+        run: ./mvnw -B spotbugs:spotbugs
+
+      - name: Upload SpotBugs SARIF to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: target/spotbugsSarif.json
