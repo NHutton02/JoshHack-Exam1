@@ -20,6 +20,46 @@ public class InventoryTest {
     }
 
     @Test
+    void getItems_mutatingReturnedArrayDoesNotChangeInventory() {
+        Inventory inventory = new Inventory(2);
+        Item potion = createItem("Potion");
+        Item sword = createItem("Sword");
+        inventory.add(potion);
+
+        Item[] items = inventory.getItems();
+
+        assertNotSame(inventory.getItems(), items);
+        items[0] = sword;
+        items[1] = potion;
+
+        assertSame(potion, inventory.get(0));
+        assertNull(inventory.get(1));
+        assertTrue(inventory.contains(potion));
+        assertFalse(inventory.contains(sword));
+    }
+
+    @Test
+    void addAndRemove_afterReturnedArrayMutation_useInventoryStorage() {
+        Inventory inventory = new Inventory(2);
+        Item potion = createItem("Potion");
+        Item sword = createItem("Sword");
+        inventory.add(potion);
+
+        inventory.getItems()[0] = sword;
+        inventory.add(sword);
+
+        assertSame(potion, inventory.get(0));
+        assertSame(sword, inventory.get(1));
+
+        inventory.remove(potion);
+
+        assertNull(inventory.get(0));
+        assertSame(sword, inventory.get(1));
+        assertFalse(inventory.contains(potion));
+        assertTrue(inventory.contains(sword));
+    }
+
+    @Test
     void get_returnsItemAtRequestedIndex() {
         Inventory inventory = new Inventory(2);
         Item potion = createItem("Potion");
