@@ -134,6 +134,15 @@ public class CreatureTest {
     }
 
     @Test
+    void modifyMana_outsideBounds_clampsToMinimumAndMaximum() {
+        creature.modifyMana(-6);
+        assertEquals(0, creature.mana());
+
+        creature.modifyMana(100);
+        assertEquals(creature.maxMana(), creature.mana());
+    }
+
+    @Test
     void testFatalDamageCreatesCorpse() {
         creature.modifyHp(-100, "Fatal Damage");
 
