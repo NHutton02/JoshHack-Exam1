@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -168,6 +169,36 @@ public class WorldTest {
         assertEquals(9, creature.z);
         assertSame(Tile.FLOOR, world.tile(0, 0, 0));
         assertNull(world.item(0, 0, 0));
+    }
+
+    @Test
+    void addAtEmptySpace_occupiedOrigin_placesItemAtOnlyAvailableNeighbor() {
+        Tile[][][] tiles = wallMap(3, 3);
+        tiles[1][1][0] = Tile.FLOOR;
+        tiles[2][1][0] = Tile.FLOOR;
+        World world = new World(tiles);
+        Item existingItem = newItem("rock");
+        Item newItem = newItem("potion");
+        world.addAtEmptySpace(existingItem, 1, 1, 0);
+
+        assertTrue(world.addAtEmptySpace(newItem, 1, 1, 0));
+
+        assertSame(existingItem, world.item(1, 1, 0));
+        assertSame(newItem, world.item(2, 1, 0));
+    }
+
+    @Test
+    void addAtEmptySpace_noReachableEmptyGround_returnsFalseWithoutReplacingItem() {
+        Tile[][][] tiles = wallMap(1, 1);
+        tiles[0][0][0] = Tile.FLOOR;
+        World world = new World(tiles);
+        Item existingItem = newItem("rock");
+        Item newItem = newItem("potion");
+        world.addAtEmptySpace(existingItem, 0, 0, 0);
+
+        assertFalse(world.addAtEmptySpace(newItem, 0, 0, 0));
+
+        assertSame(existingItem, world.item(0, 0, 0));
     }
 
     private static Tile[][][] wallMap(int width, int height) {
